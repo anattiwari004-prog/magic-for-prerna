@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Magic for Prerna ji</title>
+
+<style>
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:radial-gradient(circle at top left,#2b0f1f,#02040a 60%);
+  overflow:hidden;
+  font-family:Georgia,serif;
+  color:white;
+}
+
+/* CENTER */
+.centerWrap{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  z-index:3;
+  width:90%;
+  max-width:720px;
+}
+
+/* HEART */
+.heart{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:420px;
+  height:380px;
+  background:#b03060;
+  transform:translate(-50%,-50%) rotate(-45deg);
+  opacity:.22;
+  filter:drop-shadow(0 0 40px rgba(255,80,120,.6));
+  animation: flow 5s ease-in-out infinite;
+  z-index:-1;
+}
+.heart:before,.heart:after{
+  content:"";
+  position:absolute;
+  width:420px;
+  height:380px;
+  background:#b03060;
+  border-radius:50%;
+}
+.heart:before{top:-210px;}
+.heart:after{left:210px;}
+
+@keyframes flow{
+  0%{transform:translate(-50%,-50%) rotate(-45deg) scale(1);}
+  50%{transform:translate(-50%,-50%) rotate(-45deg) scale(1.12);}
+  100%{transform:translate(-50%,-50%) rotate(-45deg) scale(1);}
+}
+
+/* TEXT */
+#lineBox div{
+  font-size:1.6em;
+  opacity:0;
+  margin:12px 0;
+  animation: fadeIn 1.8s forwards;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.final{
+  font-size:1.7em;
+  line-height:1.6;
+}
+
+/* WAND */
+#wizardWand{
+  position:absolute;
+  top:45%;
+  left:-200px;
+  width:180px;
+  height:8px;
+  background:linear-gradient(90deg,#3a1f0f,#7a4a2e,#3a1f0f);
+  border-radius:4px;
+  transform-origin:90% 50%;
+  z-index:4;
+  transition:all .8s ease;
+}
+
+/* Wand sparkle */
+.spark{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+  pointer-events:none;
+  animation:spark 1s forwards;
+}
+@keyframes spark{
+  from{opacity:1;transform:scale(1);}
+  to{opacity:0;transform:scale(3);}
+}
+
+/* DRAGON */
+canvas{
+  position:absolute;
+  inset:0;
+  z-index:1;
+}
+
+/* MUSIC hidden */
+audio{display:none;}
+</style>
+</head>
+
+<body>
+
+<canvas id="dragon"></canvas>
+
+<div id="wizardWand"></div>
+
+<div class="centerWrap">
+  <div class="heart"></div>
+  <div id="lineBox"></div>
+</div>
+
+<audio autoplay loop>
+  <source src="hp-music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* DRAGON */
+const c=document.getElementById("dragon");
+const ctx=c.getContext("2d");
+function resize(){c.width=innerWidth;c.height=innerHeight;}
+resize();onresize=resize;
+let t=0;
+function dragon(){
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.strokeStyle="rgba(200,200,200,.35)";
+  ctx.lineWidth=1.2;
+  ctx.beginPath();
+  for(let i=0;i<240;i++){
+    let a=i*0.14+t;
+    let r=100+i*1.7;
+    let x=c.width/2+Math.cos(a)*r;
+    let y=c.height/2+Math.sin(a)*r*0.45;
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  }
+  ctx.stroke();
+  t+=0.008;
+  requestAnimationFrame(dragon);
+}
+dragon();
+
+/* WAND MAGIC */
+const wand=document.getElementById("wizardWand");
+const box=document.getElementById("lineBox");
+
+const lines=[
+  "Initializing magic for 2026...",
+  "Summoning good vibes...",
+  "Brewing warm smiles...",
+  "Gathering little moments of joy...",
+  "Wrapping hope into every day..."
+];
+
+const finalLines=[
+  "Prerna ji 😊,",
+  "May this year protect you,",
+  "bring you calm on difficult days,",
+  "strength when things feel heavy,",
+  "and light on the days you smile freely.",
+  "✨ Happy New Year 2026 ✨"
+];
+
+let i=0;
+
+function sparkle(x,y){
+  const s=document.createElement("div");
+  s.className="spark";
+  s.style.left=x+"px";
+  s.style.top=y+"px";
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),1000);
+}
+
+function flick(){
+  wand.style.left="60%";
+  wand.style.transform="rotate(-15deg)";
+  const r=wand.getBoundingClientRect();
+  sparkle(r.right,r.top);
+  setTimeout(()=>{
+    wand.style.transform="rotate(5deg)";
+  },300);
+}
+
+function showLine(){
+  if(i<lines.length){
+    flick();
+    const d=document.createElement("div");
+    d.textContent=lines[i];
+    box.appendChild(d);
+    i++;
+    setTimeout(()=>{
+      box.innerHTML="";
+      wand.style.left="-200px";
+      showLine();
+    },2400);
+  }else{
+    wand.style.opacity=0;
+    showFinal();
+  }
+}
+
+function showFinal(){
+  box.innerHTML="";
+  finalLines.forEach((t,j)=>{
+    const d=document.createElement("div");
+    d.className="final";
+    d.textContent=t;
+    d.style.animationDelay=(j*0.4)+"s";
+    box.appendChild(d);
+  });
+}
+
+setTimeout(showLine,1500);
+</script>
+
+</body>
+</html>
